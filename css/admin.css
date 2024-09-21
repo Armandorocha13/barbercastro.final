@@ -1,0 +1,20 @@
+body {
+    background-color: #f8f9fa; /* Cor de fundo leve */
+    color: #343a40; /* Cor do texto */
+}
+
+header {
+    background-color: #007bff; /* Cor de fundo do cabeçalho */
+    color: white; /* Cor do texto no cabeçalho */
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 20px; /* Margem superior para o título da seção */
+    text-align: center;
+}
+
+table {
+    margin-top: 20px; /* Margem superior para a tabela */
+}
