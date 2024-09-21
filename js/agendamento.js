@@ -19,8 +19,27 @@ document.getElementById('formAgendamento').addEventListener('submit', function (
         pagamento
     };
 
-    // Adiciona o agendamento ao localStorage
+    // Carrega os agendamentos existentes do localStorage
     const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+
+    // Conta quantos agendamentos já existem para a mesma data e hora
+    const contagemAgendamentos = agendamentos.filter(a => a.data === data && a.hora === hora).length;
+
+    // Verifica se já existem 2 agendamentos para a mesma data e hora
+    if (contagemAgendamentos >= 2) {
+        // Exibe a mensagem de indisponibilidade
+        const mensagemIndisponivel = document.getElementById('mensagemIndisponivel');
+        mensagemIndisponivel.textContent = 'Horário indisponível no momento. Selecione um horário diferente.';
+        mensagemIndisponivel.style.display = 'block';
+
+        // Remove a mensagem após alguns segundos
+        setTimeout(() => {
+            mensagemIndisponivel.style.display = 'none';
+        }, 3000); // Esconde após 3 segundos
+        return; // Sai da função se a limitação for alcançada
+    }
+
+    // Adiciona o agendamento ao localStorage
     agendamentos.push(agendamento);
     localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
 
