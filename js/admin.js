@@ -39,7 +39,26 @@ function enviarWhatsApp(telefone, data, hora) {
     window.open(`https://wa.me/${telefone}?text=${mensagem}`, '_blank');
 }
 
-// O restante do seu código continua aqui...
+// Função para finalizar um serviço
+function finalizarServico(index) {
+    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    
+    // Aqui você pode adicionar lógica para atualizar o lucro, se necessário
+    const servico = agendamentos[index].servico;
+    // Por exemplo, atualizar o lucro total, se você estiver gerenciando isso.
+
+    agendamentos.splice(index, 1); // Remove o agendamento da lista
+    localStorage.setItem('agendamentos', JSON.stringify(agendamentos)); // Atualiza o localStorage
+    carregarAgendamentos(); // Atualiza a tabela
+}
+
+// Função para cancelar um serviço
+function cancelarServico(index) {
+    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    agendamentos.splice(index, 1); // Remove o agendamento da lista
+    localStorage.setItem('agendamentos', JSON.stringify(agendamentos)); // Atualiza o localStorage
+    carregarAgendamentos(); // Atualiza a tabela
+}
 
 // Carrega os agendamentos ao iniciar a página
 carregarAgendamentos();
