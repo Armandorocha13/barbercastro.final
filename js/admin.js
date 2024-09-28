@@ -7,11 +7,6 @@ const servicos = {
     "pezinho": 10
 };
 
-const agendamentos = [
-    { nome: "João", telefone: "123456789", servico: "corteSimples", data: "2023-09-21", hora: "10:00", pagamento: "pix", finalizado: false },
-    { nome: "Maria", telefone: "987654321", servico: "corteBarba", data: "2023-09-21", hora: "11:00", pagamento: "dinheiro", finalizado: false },
-    // Adicione mais agendamentos conforme necessário
-];
 
 let lucroTotal = 0; // Variável para armazenar o lucro total acumulado
 
