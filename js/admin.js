@@ -1,66 +1,41 @@
-// Exemplo de dados de serviços realizados e preços
-const servicos = {
-    "corteSimples": 20,
-    "corteNavalhado": 25,
-    "corteBarba": 35,
-    "reflexoPintura": 40,
-    "pezinho": 10
-};
-
-
-let lucroTotal = 0; // Variável para armazenar o lucro total acumulado
-
-function carregarAgendamentos() {
-    const tbody = document.getElementById('listaAgendamentos').querySelector('tbody');
-    tbody.innerHTML = ''; // Limpa o tbody antes de adicionar os agendamentos
-    agendamentos.forEach((agendamento, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${agendamento.nome}</td>
-            <td>${agendamento.telefone}</td>
-            <td>${agendamento.servico}</td>
-            <td>${agendamento.data}</td>
-            <td>${agendamento.hora}</td>
-            <td>${agendamento.pagamento}</td>
-            <td>
-                <button class="btn btn-success btn-sm" onclick="finalizarServico(${index})">Finalizar</button>
-                <button class="btn btn-danger btn-sm" onclick="cancelarServico(${index})">Cancelar</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
+// Função para finalizar um serviço
 function finalizarServico(index) {
-    if (!agendamentos[index].finalizado) {
-        agendamentos[index].finalizado = true;
-        atualizarRelatorioLucro(servicos[agendamentos[index].servico], true); // Atualiza o lucro total
-        agendamentos.splice(index, 1); // Remove o agendamento da lista
-        carregarAgendamentos(); // Atualiza a tabela de agendamentos
-        exibirRelatorioLucro(); // Exibe o relatório atualizado com o lucro total acumulado
-    }
+    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+
+    // Aqui você pode adicionar lógica para atualizar o lucro, se necessário
+    const servico = agendamentos[index].servico;
+    // Por exemplo, atualizar o lucro total, se você estiver gerenciando isso.
+
+    agendamentos.splice(index, 1); // Remove o agendamento da lista
+    localStorage.setItem('agendamentos', JSON.stringify(agendamentos)); // Atualiza o localStorage
+    carregarAgendamentos(); // Atualiza a tabela
+@@ -60,5 +55,29 @@ function cancelarServico(index) {
+    carregarAgendamentos(); // Atualiza a tabela
 }
 
-function cancelarServico(index) {
-    if (!agendamentos[index].finalizado) {
-        agendamentos.splice(index, 1); // Remove o agendamento da lista
-        carregarAgendamentos(); // Atualiza a tabela
-    }
-}
 
-function atualizarRelatorioLucro(valor, finalizar) {
-    if (finalizar) {
-        lucroTotal += valor; // Acumula o valor no lucro total
-    }
+// Gera relatório diário de lucro
+document.getElementById('gerarRelatorio').addEventListener('click', function() {
+    const dataAtual = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    let lucroTotal = 0;
+    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
 
-    exibirRelatorioLucro(); // Chama a função para exibir o relatório atualizado
-}
+    agendamentos.forEach(agendamento => {
+        if (agendamento.data === dataAtual) {
+            lucroTotal += servicos[agendamento.servico] || 0; // Adiciona o valor do serviço ao lucro total
+        }
+    });
 
-function exibirRelatorioLucro() {
-    const lucroTotalElement = document.getElementById('lucroTotal');
-    lucroTotalElement.textContent = `Lucro Total do Dia: R$ ${lucroTotal.toFixed(2)}`;
+    document.getElementById('lucroTotal').textContent = `Lucro Total do Dia (${dataAtual}): R$ ${lucroTotal.toFixed(2)}`;
     document.getElementById('relatorioLucro').style.display = 'block'; // Exibe o relatório
+});
+
+if (!sessionStorage.getItem('auth')) {
+    // Redireciona para a página de login se não estiver autenticado
+    window.location.href = 'login.html';
 }
+
+
 
 // Carrega os agendamentos ao iniciar a página
 carregarAgendamentos();
