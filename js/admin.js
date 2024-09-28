@@ -1,25 +1,28 @@
 // Exemplo de dados de serviços realizados e preços
 const servicos = {
-    "corteSimples": 20,
-    "corteNavalhado": 25,
-    "corteBarba": 35,
-    "reflexoPintura": 40,
+    "corte Simples": 20,
+    "corte Navalhado": 25,
+    "corte Barba": 35,
+    "reflexo Pintura": 40,
     "pezinho": 10
 };
 
-// Carrega os agendamentos do localStorage
+const agendamentos = [
+    { nome: "João", telefone: "123456789", servico: "corteSimples", data: "2023-09-21", hora: "10:00", pagamento: "pix", finalizado: false },
+    { nome: "Maria", telefone: "987654321", servico: "corteBarba", data: "2023-09-21", hora: "11:00", pagamento: "dinheiro", finalizado: false },
+    // Adicione mais agendamentos conforme necessário
+];
+
+let lucroTotal = 0; // Variável para armazenar o lucro total acumulado
+
 function carregarAgendamentos() {
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
     const tbody = document.getElementById('listaAgendamentos').querySelector('tbody');
     tbody.innerHTML = ''; // Limpa o tbody antes de adicionar os agendamentos
-
     agendamentos.forEach((agendamento, index) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${agendamento.nome}</td>
-            <td>
-                <button class="btn btn-primary btn-sm" onclick="enviarWhatsApp('${agendamento.telefone}', '${agendamento.data}', '${agendamento.hora}')">Enviar Mensagem</button>
-            </td>
+            <td>${agendamento.telefone}</td>
             <td>${agendamento.servico}</td>
             <td>${agendamento.data}</td>
             <td>${agendamento.hora}</td>
@@ -33,51 +36,36 @@ function carregarAgendamentos() {
     });
 }
 
-// Função para enviar mensagem via WhatsApp
-function enviarWhatsApp(telefone, data, hora) {
-    const mensagem = encodeURIComponent(`Olá! Deseja confirmar presença no agendamento para o dia ${data} às ${hora}?`);
-    window.open(`https://wa.me/${telefone}?text=${mensagem}`, '_blank');
-}
-
-// Função para finalizar um serviço
 function finalizarServico(index) {
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-    agendamentos.splice(index, 1); // Remove o agendamento da lista
-    localStorage.setItem('agendamentos', JSON.stringify(agendamentos)); // Atualiza o localStorage
-    carregarAgendamentos(); // Atualiza a tabela
+    if (!agendamentos[index].finalizado) {
+        agendamentos[index].finalizado = true;
+        atualizarRelatorioLucro(servicos[agendamentos[index].servico], true); // Atualiza o lucro total
+        agendamentos.splice(index, 1); // Remove o agendamento da lista
+        carregarAgendamentos(); // Atualiza a tabela de agendamentos
+        exibirRelatorioLucro(); // Exibe o relatório atualizado com o lucro total acumulado
+    }
 }
 
-// Função para cancelar um serviço
 function cancelarServico(index) {
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-    agendamentos.splice(index, 1); // Remove o agendamento da lista
-    localStorage.setItem('agendamentos', JSON.stringify(agendamentos)); // Atualiza o localStorage
-    carregarAgendamentos(); // Atualiza a tabela
+    if (!agendamentos[index].finalizado) {
+        agendamentos.splice(index, 1); // Remove o agendamento da lista
+        carregarAgendamentos(); // Atualiza a tabela
+    }
 }
 
+function atualizarRelatorioLucro(valor, finalizar) {
+    if (finalizar) {
+        lucroTotal += valor; // Acumula o valor no lucro total
+    }
 
-// Gera relatório diário de lucro
-document.getElementById('gerarRelatorio').addEventListener('click', function() {
-    const dataAtual = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
-    let lucroTotal = 0;
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    exibirRelatorioLucro(); // Chama a função para exibir o relatório atualizado
+}
 
-    agendamentos.forEach(agendamento => {
-        if (agendamento.data === dataAtual) {
-            lucroTotal += servicos[agendamento.servico] || 0; // Adiciona o valor do serviço ao lucro total
-        }
-    });
-
-    document.getElementById('lucroTotal').textContent = `Lucro Total do Dia (${dataAtual}): R$ ${lucroTotal.toFixed(2)}`;
+function exibirRelatorioLucro() {
+    const lucroTotalElement = document.getElementById('lucroTotal');
+    lucroTotalElement.textContent = `Lucro Total do Dia: R$ ${lucroTotal.toFixed(2)}`;
     document.getElementById('relatorioLucro').style.display = 'block'; // Exibe o relatório
-});
-
-if (!sessionStorage.getItem('auth')) {
-    // Redireciona para a página de login se não estiver autenticado
-    window.location.href = 'login.html';
 }
-
-
 
 // Carrega os agendamentos ao iniciar a página
 carregarAgendamentos();
