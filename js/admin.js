@@ -1,9 +1,9 @@
 // Exemplo de dados de serviços realizados e preços
 const servicos = {
-    "corte Simples": 20,
-    "corte Navalhado": 25,
-    "corte Barba": 35,
-    "reflexo Pintura": 40,
+    "corteSimples": 20,
+    "corteNavalhado": 25,
+    "corteBarba": 35,
+    "reflexoPintura": 40,
     "pezinho": 10
 };
 
